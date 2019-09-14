@@ -148,7 +148,10 @@ system( [latex ' -interaction=nonstopmode ' outfile ' .tex'] );
 % PARSE DVI TO PNG %
 %%%%%%%%%%%%%%%%%%%%
 %if you want to make your image transparent change white to transparent
-system( [dvipng ' -q -T tight -bg ' background ' -D' num2str(density) ' ' ...
+%system( [dvipng ' -q -T tight -bg ' background ' -D' num2str(density) ' ' ...
+%    outfile '.dvi'] );
+	
+system( [dvipng ' -q -T tight'  ' -D' num2str(density) ' ' ...
     outfile '.dvi'] );
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -163,7 +166,7 @@ end
 end%latex2png
 
 function write_latex_file( snippet, outfile, parameters )
-fileID = fopen( [outfile '.tex'] , 'w' );
+fileID = fopen( [outfile '.tex'] , 'w' )
 fprintf( fileID, '%s\n', '\documentclass[fleqn]{article}' );
 fprintf( fileID, '%s\n', ['\DeclareMathSizes{' ...
     num2str(parameters.font_size) '}{' ...
