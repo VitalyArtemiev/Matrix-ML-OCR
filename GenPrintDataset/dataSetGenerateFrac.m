@@ -5,7 +5,7 @@ maxCols = 6;
 minInt = - 100;
 maxInt = 100;
 
-numToGenerate = 128; %MUST BE POWER OF 2
+numToGenerate = 32; %MUST BE POWER OF 2
 threshold = numToGenerate / 8;
 
 for counter = 1:numToGenerate
@@ -28,6 +28,9 @@ for counter = 1:numToGenerate
   end
   
   m = randi([minInt maxInt], r, c);
+  md = randi([minInt maxInt], r, c);
+  
+  rats(m ./ md)
   
   doHline = (randi(10) == 1); 
   doVline = (randi(10) == 1);
@@ -37,7 +40,24 @@ for counter = 1:numToGenerate
 	doHline = 0;
   end
   
-  ms = strrep(strrep(mat2str(m)," ","&"),";","\\\\\n")(2:end-1);
+  ms = '';
+  
+  for j = 1:c
+	ms = [ms '\frac{'  int2str(m(1, j)) '}{'  int2str(md(1, j)) '}&' ];
+  end
+  ms(end) = '';
+  
+  for i = 2:r
+    ms = [ms '\\' "\n"];
+    for j = 1:c
+	  ms = [ms '\frac{'  int2str(m(i, j)) '}{'  int2str(md(i, j)) '}&' ];
+	end	
+	ms(end) = '';
+  end
+  
+  ms
+  
+  %ms = strrep(strrep(rats(m),"       ","&"),";","\\\\\n")(2:end-1);
   
   if doHline
 	index = findstr(ms, '\\') .+ 1;
@@ -65,8 +85,8 @@ for counter = 1:numToGenerate
     arrayFmt = ['{'  strcat(repmat('c', 1, c))  '}'];
   end
   
-  
-  s = ['\begin{array}'  arrayFmt "\n" ms "\n" '\end{array}'];
+  s = ['\arraycolsep=1.4pt\def\arraystretch{1.5}' "\n"];
+  s = [s '\begin{array}'  arrayFmt "\n" ms "\n" '\end{array}'];
   
   %matrix, bmatrix, pmatrix, vmatrix, Vmatrix
   
@@ -85,8 +105,9 @@ for counter = 1:numToGenerate
   
   s; 
   
-  pars.debug = 0;
+  pars.debug = false;
   pars.outfile = int2str(counter);
   
   latex2png(s, pars);
+  %pause();
 end

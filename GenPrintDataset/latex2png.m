@@ -151,14 +151,20 @@ system( [latex ' -interaction=nonstopmode ' outfile ' .tex'] );
 %system( [dvipng ' -q -T tight -bg ' background ' -D' num2str(density) ' ' ...
 %    outfile '.dvi'] );
 	
-system( [dvipng ' -q -T tight'  ' -D' num2str(density) ' ' ...
-    outfile '.dvi'] );
+%system( [dvipng ' -q -T tight'  ' -D' num2str(density) ' ' ...
+%    outfile '.dvi'] );
+
+%system( [dvipng ' -q'  ' -D' num2str(density) ' ' ...
+   %outfile '.dvi'] );
+   
+system( [dvipng '-q -D' num2str(density) ' ' ...
+   outfile '.dvi'] );
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 % REMOVE TEMPORARY FILES %
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 if ~debug
-	delete( [ outfile '.tex' ] );
+	%delete( [ outfile '.tex' ] );
 	delete( [ outfile '.dvi' ] );
 	delete( [ outfile '.aux' ] );
 	delete( [ outfile '.log' ] );
@@ -167,7 +173,7 @@ end%latex2png
 
 function write_latex_file( snippet, outfile, parameters )
 fileID = fopen( [outfile '.tex'] , 'w' )
-fprintf( fileID, '%s\n', '\documentclass[fleqn]{article}' );
+fprintf( fileID, '%s\n', '\documentclass[border=8pt]{standalone}' );
 fprintf( fileID, '%s\n', ['\DeclareMathSizes{' ...
     num2str(parameters.font_size) '}{' ...
     num2str(parameters.equation_regular_text_size) '}{' ...
