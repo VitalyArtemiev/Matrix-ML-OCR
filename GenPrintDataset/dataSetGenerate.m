@@ -9,6 +9,7 @@ numToGenerate = 128; %MUST BE POWER OF 2
 threshold = numToGenerate / 8;
 
 for counter = 1:numToGenerate
+  filename = [int2str(counter) 'i'];
   r = randi([minRows, maxRows]);
   c = randi([minCols, maxCols]);
   
@@ -19,8 +20,7 @@ for counter = 1:numToGenerate
 	case {7, 8}
 	  matrType = 3;
   end
-  
-  
+   
   if i == threshold
     minInt /= 2;
     maxInt /= 2;
@@ -40,6 +40,7 @@ for counter = 1:numToGenerate
   ms = strrep(strrep(mat2str(m)," ","&"),";","\\\\\n")(2:end-1);
   
   if doHline
+    filename = [filename 'h'];
 	index = findstr(ms, '\\') .+ 1;
 	
 	if (rem(r, 2) == 0) && (randi(5) == 1);
@@ -54,6 +55,7 @@ for counter = 1:numToGenerate
   
   arrayFmt = '';
   if doVline
+    filename = [filename 'v'];
     if (rem(c, 2) == 0) && (randi(5) == 1)
 	
 	  t = strcat(repmat('c', 1, c / 2));
@@ -72,21 +74,26 @@ for counter = 1:numToGenerate
   
   switch matrType
     case 1
-	  s = s;	
+	  s = s;
+	  filename = [filename 'm']; 
 	case 2
 	  s = ['\left[' "\n" s "\n" '\right]'];
+	  filename = [filename 'b'];
 	case 3
 	  s = ['\left(' "\n" s "\n" '\right)'];
+	  filename = [filename 'p'];
 	case 4
 	  s = ['\left|' "\n" s "\n" '\right|'];
+	  filename = [filename 'l'];
 	case 5
       s = ['\begin{Vmatrix}' "\n" ms "\n" '\end{Vmatrix}'];
+	  filename = [filename 'V'];
   end
   
   s; 
   
   pars.debug = 0;
-  pars.outfile = int2str(counter);
+  pars.outfile = filename;
   
   latex2png(s, pars);
 end
