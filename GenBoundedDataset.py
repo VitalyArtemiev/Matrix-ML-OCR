@@ -12,51 +12,55 @@ from pascal_voc_writer import Writer
 
     
     
-HWMatrPath = './HandWrittenDataset\single'
-PMatrPath = './PrintedDataset'
+HWMatrPath = './HandWrittenDataset/single'
+PMatrPath = './PrintedDataset/test'
 BGPath = './Backgrounds'
 
 resultImgPath = './synthMultiMatr/img'
 resultXmlPath = './synthMultiMatr/xml'
-    
-    
 
 
-def generateSample(background, mList, numMatrices: int, fileName: str):
+def generateSample(background, mPath, mList, numMatrices: int, fileName: str):
     bgW, bgH = background.size
     # Writer(path, width, height)
     writer = Writer(fileName, bgW, bgH)
     
-    for i in 1..numMatrices:
-        imgPath = random.choice(mList)
-        img = Image.open(imgPath, 'r')
+    for i in range(numMatrices):
+        imgName = random.choice(mList)
+        mType: chr = imgName[0]
+        annotation: str = 'Matrix'
+        if mType != 'm':
+            annotation = mType + annotation
+        
+        img = Image.open(mPath + '/' + imgName, 'r')
         imgW, imgH = img.size
         
         offset = ((bgW - imgW) // 2, (bgH - imgH) // 2)
         background.paste(img, offset)
         
-        writer.addObject('cat', 100, 100, 200, 200)
-        
-        
+        writer.addObject('annotation', 100, 100, 200, 200)
 
-
-
-    writer.save(fileName + ".xml")
-    background.save(fileName)
+    writer.save(resultXmlPath + '/' + fileName + ".xml")
+    background.save(resultImgPath + '/' + fileName)
         
     
 def generateDataset(numSamples: int, setName: str, bgFolder: str, mFolder: str):
     bgList = os.listdir(bgFolder)
+    print(bgList)
     mList = os.listdir(mFolder)
     
-    for i in 1..numSamples:
-        bgPath = random.choice(bgList)
+    for i in range(numSamples):
+        bgPath = bgFolder + '/' + random.choice(bgList)
         bgImg = Image.open(bgPath, 'r')
         
         numMatrices = random.randint(1, 8)
         fileName = setName + str(i)
         
-        generateSample(bgImg, mList, numMatrices, fileName)
+        print(fileName)
+        
+        generateSample(bgImg, mFolder, mList, numMatrices, fileName)
+        
+generateDataset(10, "testset", BGPath, PMatrPath)
     
     
     
