@@ -14,10 +14,10 @@ from pascal_voc_writer import Writer
     
 HWMatrPath = './HandWrittenDataset/single'
 PMatrPath = './PrintedDataset/test'
-BGPath = './Backgrounds'
+BGPath = './PBackgrounds'
 
-resultImgPath = './synthMultiMatr/img'
-resultXmlPath = './synthMultiMatr/xml'
+resultImgPath = './SynthMultiMatr/img'
+resultXmlPath = './SynthMultiMatr/xml'
 
 
 def generateSample(background, mPath, mList, numMatrices: int, fileName: str):
@@ -41,7 +41,7 @@ def generateSample(background, mPath, mList, numMatrices: int, fileName: str):
         writer.addObject('annotation', 100, 100, 200, 200)
 
     writer.save(resultXmlPath + '/' + fileName + ".xml")
-    background.save(resultImgPath + '/' + fileName)
+    background.save(resultImgPath + '/' + fileName + ".png")
         
     
 def generateDataset(numSamples: int, setName: str, bgFolder: str, mFolder: str):
