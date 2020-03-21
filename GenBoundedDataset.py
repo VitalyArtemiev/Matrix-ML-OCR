@@ -20,10 +20,19 @@ resultImgPath = './SynthMultiMatr/img'
 resultXmlPath = './SynthMultiMatr/xml'
 
 
-def generateSample(background, mPath, mList, numMatrices: int, fileName: str):
+def generateSample(background: Image, mPath, mList, numMatrices: int, fileName: str):
     bgW, bgH = background.size
+    rW = bgW // 4
+    rH = bgH // 4
+    result = background.resize([rW, rH], Image.NEAREST)
+
     # Writer(path, width, height)
-    writer = Writer(fileName, bgW, bgH)
+    writer = Writer(fileName, rW, rH)
+    
+    lastLeft = 0
+    lastTop = random.randint(0, rH // 4)
+    lastW = 0
+    lastH = 4
     
     for i in range(numMatrices):
         imgName = random.choice(mList)
@@ -34,14 +43,37 @@ def generateSample(background, mPath, mList, numMatrices: int, fileName: str):
         
         img = Image.open(mPath + '/' + imgName, 'r')
         imgW, imgH = img.size
+        imgW = imgW // 4
+        imgH = imgH // 4
         
-        offset = ((bgW - imgW) // 2, (bgH - imgH) // 2)
-        background.paste(img, offset)
+        img = img.resize([imgW, imgH], Image.NEAREST)
+        border = Image.new('RGB', (imgW + 12, imgH + 12), "white")
         
-        writer.addObject('annotation', 100, 100, 200, 200)
+        left = lastLeft + lastW + random.randint(6, rW)
+        
+        if left + imgW > rW:
+            left = random.randint(0, rW - imgW)
+            top = lastTop + lastH + random.randint(6, rH - imgH)
+        else:
+            top = lastTop 
+        
+        offset = (left, top)
+        borderOffset = (left - 6, top - 6)
+        result.paste(border, borderOffset)
+        result.paste(img, offset)
+        
+        writer.addObject(annotation, left, top, left + imgW, top + imgH)
+        
+        if top + imgH > rH:
+            break
+        
+        lastLeft = left
+        lastTop = top
+        lastW = imgW
+        lastH = imgH
 
     writer.save(resultXmlPath + '/' + fileName + ".xml")
-    background.save(resultImgPath + '/' + fileName + ".png")
+    result.save(resultImgPath + '/' + fileName + ".png")
         
     
 def generateDataset(numSamples: int, setName: str, bgFolder: str, mFolder: str):
@@ -53,7 +85,7 @@ def generateDataset(numSamples: int, setName: str, bgFolder: str, mFolder: str):
         bgPath = bgFolder + '/' + random.choice(bgList)
         bgImg = Image.open(bgPath, 'r')
         
-        numMatrices = random.randint(1, 8)
+        numMatrices = random.randint(0, 6)
         fileName = setName + str(i)
         
         print(fileName)
