@@ -10,15 +10,12 @@ import os
 import random
 from pascal_voc_writer import Writer
 
-    
-    
 HWMatrPath = './HandWrittenDataset/single'
-PMatrPath = './PrintedDataset/test'
+PMatrPath = './PrintedDataset/set1'
 BGPath = './PBackgrounds'
 
 resultImgPath = './SynthMultiMatr/img'
-resultXmlPath = './SynthMultiMatr/xml'
-
+resultXmlPath = './SynthMultiMatr/img'
 
 def generateSample(background: Image, mPath, mList, numMatrices: int, fileName: str):
     bgW, bgH = background.size
@@ -43,10 +40,13 @@ def generateSample(background: Image, mPath, mList, numMatrices: int, fileName: 
         
         img = Image.open(mPath + '/' + imgName, 'r')
         imgW, imgH = img.size
-        imgW = imgW // 4
-        imgH = imgH // 4
         
-        img = img.resize([imgW, imgH], Image.NEAREST)
+        scale = random.randint(3, 5)
+        
+        imgW = imgW // scale
+        imgH = imgH // scale
+        
+        img = img.resize([imgW, imgH], Image.BICUBIC)
         border = Image.new('RGB', (imgW + 12, imgH + 12), "white")
         
         left = lastLeft + lastW + random.randint(6, rW)
@@ -56,9 +56,14 @@ def generateSample(background: Image, mPath, mList, numMatrices: int, fileName: 
             top = lastTop + lastH + random.randint(6, rH - imgH)
         else:
             top = lastTop 
+            
+        if top + imgH // 2 > rH:
+            top = lastTop + lastH + 6
+            if top + imgH // 2 > rH:
+                break
         
         offset = (left, top)
-        borderOffset = (left - 6, top - 6)
+        borderOffset = (left - 6, top - 6)        
         result.paste(border, borderOffset)
         result.paste(img, offset)
         
@@ -85,14 +90,17 @@ def generateDataset(numSamples: int, setName: str, bgFolder: str, mFolder: str):
         bgPath = bgFolder + '/' + random.choice(bgList)
         bgImg = Image.open(bgPath, 'r')
         
+        if random.getrandbits(1):
+            bgImg = bgImg.transpose(Image.FLIP_LEFT_RIGHT)
+        
         numMatrices = random.randint(0, 6)
-        fileName = setName + str(i)
+        fileName = setName + '-' + str(i)
         
         print(fileName)
         
         generateSample(bgImg, mFolder, mList, numMatrices, fileName)
         
-generateDataset(10, "testset", BGPath, PMatrPath)
+generateDataset(4096+1024, "smm1", BGPath, PMatrPath)
     
     
     

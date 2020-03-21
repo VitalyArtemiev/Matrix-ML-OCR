@@ -1,6 +1,6 @@
 minRows = 2;
 maxRows = 6;
-minCols = 2;
+minCols = 1;
 maxCols = 6;
 minInt = - 100;
 maxInt = 100;
@@ -35,6 +35,12 @@ for counter = 1:numToGenerate
   
   doHline = (randi(10) == 1); 
   doVline = (randi(10) == 1);
+  
+  if c == 1
+    matrType = 3;
+	doVline = 0;
+	doHline = 0;
+  end
   
   if matrType >= 4
     doVline = 0;
