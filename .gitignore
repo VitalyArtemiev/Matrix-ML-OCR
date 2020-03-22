@@ -126,3 +126,6 @@ dmypy.json
 smm*.xml
 *.h5
 *.pkl
+*/log_voc/*
+*.VITALY-DESKTOP
+keras-yolo3-master/log_voc/events.out.tfevents.1584846111.VITALY-DESKTOP

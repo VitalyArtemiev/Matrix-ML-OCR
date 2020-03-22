@@ -24,7 +24,7 @@ def generateSample(background: Image, mPath, mList, numMatrices: int, fileName: 
     result = background.resize([rW, rH], Image.NEAREST)
 
     # Writer(path, width, height)
-    writer = Writer(fileName, rW, rH)
+    writer = Writer(fileName + ".png", rW, rH)
     
     lastLeft = 0
     lastTop = random.randint(0, rH // 4)
