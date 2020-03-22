@@ -124,3 +124,5 @@ dmypy.json
 *.png
 *set*.xml
 smm*.xml
+*.h5
+*.pkl
